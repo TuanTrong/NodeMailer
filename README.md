@@ -1,3 +1,3 @@
-# maildemo
+Node mailer
 
-a [Sails](http://sailsjs.org) application
+Sending email with template. 
