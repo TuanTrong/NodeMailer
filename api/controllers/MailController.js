@@ -1,49 +1,54 @@
 /**
  * Created by TuanNT22 on 18-06-2015.
  */
-var nodemailer = require('nodemailer');
-var hbs = require('nodemailer-express-handlebars');
+
 module.exports = {
   sendMail: function (req, res) {
+    var nodemailer = require('nodemailer');
+    var hbs = require('nodemailer-express-handlebars');
     //email template setting
     var options = {
       viewEngine: {
         extname: '.hbs',
         layoutsDir: 'views/email/template',
         defaultLayout: 'template',
-        partialsDir: 'views/template/partials/'
+        partialsDir: 'views/email/template/partials/'
       },
       viewPath: 'views/email/',
       extName: '.hbs'
     };
-    // Create a SMTP transport object
-    var mailer = nodemailer.createTransport("SMTP", {
-      service: 'Gmail',
-      auth: {
-        user: "mrbotno@gmail.com",
-        pass: "botngot91"
-      }
+    var generator = require('xoauth2').createXOAuth2Generator({
+      user: 'mrbotno@gmail.com',
+      clientId: '109620886904-3i95hnuu084hoc937tnoikl818kd445k.apps.googleusercontent.com',
+      clientSecret: 'AG-gp2VZ2Ajgqtx8e3ulUxEA',
+      refreshToken: '1/J5mTd_LcpTl01RDN4LNn2TG1H5nchj8iCJK5s8iiVyc'
     });
+    var mailer = nodemailer.createTransport(({
+      service: 'gmail',
+      auth: {
+        xoauth2: generator
+      }
+    }));
     mailer.use('compile', hbs(options));
     console.log('SMTP Configured');
     // Message object
-    var message = {
+    var mail = {
       // sender info
       from: 'MrTuan <mrbotno@gmail.com>',
       // Comma separated list of recipients
       to: '"MsHa" <mrbotno@gmail.com>',
       // Subject of the message
-      subject: 'Nodemailer is unicode friendly ✔',
+      subject: 'Active Japanese Learning Online Tool Account ✔',
       // setting template for email
       template: 'new',
       //variable pass to template
       context: {
-        username: '',
-        activelink: ''
+        username: 'Tuan Trong',
+        activelink: 'http://localhost:1337'
       }
     };
     console.log('Sending Mail');
-    mailer.sendMail(message, function (error) {
+    mailer.sendMail(mail, function (error) {
       if (error) {
         console.log('Error occured');
         console.log(error);
